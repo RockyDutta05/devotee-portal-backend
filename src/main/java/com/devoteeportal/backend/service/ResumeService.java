@@ -31,10 +31,10 @@ public class ResumeService {
     private final UserRepository userRepository;
     private final S3Presigner s3Presigner;
 
-    @Value("${R2_BUCKET_NAME}")
+    @Value("${app.r2.bucket-name}")
     private String bucketName;
     
-    @Value("${R2_ENDPOINT_URL}")
+    @Value("${app.r2.endpoint-url}")
     private String endpointUrl;
 
     public List<ResumeResponse> getMyResumes(String email) {
@@ -124,8 +124,6 @@ public class ResumeService {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(objectKey)
-                .contentType(request.getFileType())
-                .contentLength(request.getContentLength())
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(PutObjectPresignRequest.builder()
