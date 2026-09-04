@@ -34,7 +34,7 @@ public class AuthService {
     @Transactional
     public UserDto signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email is already in use");
+            throw new IllegalArgumentException("Email is already in use");
         }
 
         User user = User.builder()

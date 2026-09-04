@@ -57,7 +57,7 @@ public class Resume {
             this.hiddenFromPublicSearch = false;
         }
         if (this.status == null) {
-            this.status = ResumeStatus.ACTIVE;
+            this.status = ResumeStatus.ACTIVELY_LOOKING;
         }
     }
 }

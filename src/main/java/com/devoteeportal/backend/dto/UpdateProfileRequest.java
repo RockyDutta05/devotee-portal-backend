@@ -12,5 +12,7 @@ public class UpdateProfileRequest {
     @jakarta.validation.constraints.Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
     private String phone;
     private String currentEmployer;
+    private String jobTitle;
+    private String location;
     private Boolean hideEmployer;
 }

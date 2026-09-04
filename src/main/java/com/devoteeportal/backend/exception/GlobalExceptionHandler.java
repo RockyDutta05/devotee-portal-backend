@@ -46,6 +46,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Bad Request");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
         Map<String, String> response = new HashMap<>();
@@ -60,6 +68,12 @@ public class GlobalExceptionHandler {
             response.put("error", "Not Found");
             response.put("message", ex.getMessage());
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        if (ex instanceof org.springframework.security.core.AuthenticationException) {
+            response.put("error", "Unauthorized");
+            response.put("message", "Invalid email or password");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
         response.put("error", "Internal Server Error");

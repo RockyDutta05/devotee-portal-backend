@@ -15,6 +15,8 @@ public class SignupRequest {
     private Integer chantingRounds;
 
     private String connectedToName;
+    @NotBlank(message = "Counselor/Mentor contact is required")
+    @Pattern(regexp = "^\\d{10}$", message = "Contact must be exactly 10 digits")
     private String connectedToContact;
 
     @NotBlank

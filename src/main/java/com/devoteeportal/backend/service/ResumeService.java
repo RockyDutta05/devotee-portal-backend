@@ -48,7 +48,7 @@ public class ResumeService {
     }
 
     public List<ResumeResponse> browsePublicResumes() {
-        return resumeRepository.findByHiddenFromPublicSearchFalseAndStatus(ResumeStatus.ACTIVE)
+        return resumeRepository.findByHiddenFromPublicSearchFalseAndStatus(ResumeStatus.ACTIVELY_LOOKING)
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -65,7 +65,7 @@ public class ResumeService {
                 .fileUrl(request.getFileUrl())
                 .fileName(request.getFileName())
                 .fileType(request.getFileType())
-                .status(request.getStatus() != null ? request.getStatus() : ResumeStatus.ACTIVE)
+                .status(request.getStatus() != null ? request.getStatus() : ResumeStatus.ACTIVELY_LOOKING)
                 .noticePeriod(request.getNoticePeriod())
                 .hiddenFromPublicSearch(request.getHiddenFromPublicSearch() != null ? request.getHiddenFromPublicSearch() : false)
                 .build();
@@ -124,6 +124,7 @@ public class ResumeService {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(objectKey)
+                .contentType(request.getFileType())
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(PutObjectPresignRequest.builder()
@@ -139,11 +140,36 @@ public class ResumeService {
     }
 
     private ResumeResponse mapToDto(Resume resume) {
+        String finalFileUrl = resume.getFileUrl();
+        String prefix = endpointUrl + "/" + bucketName + "/";
+        if (finalFileUrl != null && finalFileUrl.startsWith(prefix)) {
+            try {
+                String objectKey = finalFileUrl.substring(prefix.length());
+                software.amazon.awssdk.services.s3.model.GetObjectRequest getObjectRequest = software.amazon.awssdk.services.s3.model.GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(objectKey)
+                        .build();
+
+                software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(
+                        software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest.builder()
+                        .signatureDuration(Duration.ofMinutes(60))
+                        .getObjectRequest(getObjectRequest)
+                        .build());
+                finalFileUrl = presignedRequest.url().toString();
+            } catch (Exception e) {
+                // Fallback to original URL if presigning fails
+            }
+        }
+
         return ResumeResponse.builder()
                 .id(resume.getId())
                 .userId(resume.getUser().getId())
+                .userName(resume.getUser().getName())
+                .userEmail(resume.getUser().getEmail())
+                .userJobTitle(resume.getUser().getJobTitle())
+                .userLocation(resume.getUser().getLocation())
                 .title(resume.getTitle())
-                .fileUrl(resume.getFileUrl())
+                .fileUrl(finalFileUrl)
                 .fileName(resume.getFileName())
                 .fileType(resume.getFileType())
                 .status(resume.getStatus())

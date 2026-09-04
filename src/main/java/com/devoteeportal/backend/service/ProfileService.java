@@ -35,6 +35,8 @@ public class ProfileService {
         if (request.getConnectedToContact() != null) user.setConnectedToContact(request.getConnectedToContact());
         if (request.getPhone() != null) user.setPhone(request.getPhone());
         if (request.getCurrentEmployer() != null) user.setCurrentEmployer(request.getCurrentEmployer());
+        if (request.getJobTitle() != null) user.setJobTitle(request.getJobTitle());
+        if (request.getLocation() != null) user.setLocation(request.getLocation());
         if (request.getHideEmployer() != null) user.setHideEmployer(request.getHideEmployer());
 
         User savedUser = userRepository.save(user);
@@ -52,6 +54,8 @@ public class ProfileService {
                 .chantingRounds(user.getChantingRounds())
                 .connectedToName(user.getConnectedToName())
                 .currentEmployer(Boolean.TRUE.equals(user.getHideEmployer()) ? null : user.getCurrentEmployer())
+                .jobTitle(user.getJobTitle())
+                .location(user.getLocation())
                 .build();
     }
 
@@ -66,6 +70,8 @@ public class ProfileService {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .currentEmployer(user.getCurrentEmployer())
+                .jobTitle(user.getJobTitle())
+                .location(user.getLocation())
                 .hideEmployer(user.getHideEmployer())
                 .role(user.getRole())
                 .approvalStatus(user.getApprovalStatus())

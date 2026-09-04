@@ -14,4 +14,6 @@ public class PublicProfileResponse {
     private Integer chantingRounds;
     private String connectedToName;
     private String currentEmployer; 
+    private String jobTitle;
+    private String location;
 }

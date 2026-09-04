@@ -12,6 +12,10 @@ import java.util.UUID;
 public class ResumeResponse {
     private UUID id;
     private UUID userId;
+    private String userName;
+    private String userEmail;
+    private String userJobTitle;
+    private String userLocation;
     private String title;
     private String fileUrl;
     private String fileName;

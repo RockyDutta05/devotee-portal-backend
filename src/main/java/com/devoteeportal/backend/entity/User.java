@@ -41,6 +41,10 @@ public class User {
 
     private String currentEmployer;
 
+    private String jobTitle;
+
+    private String location;
+
     private Boolean hideEmployer;
 
     @Enumerated(EnumType.STRING)
