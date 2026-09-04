@@ -23,7 +23,7 @@ public class AdminSettingsController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/referral-cap")
-    public ResponseEntity<AdminSettingsDto> updateReferralCap(@RequestBody UpdateAdminSettingsRequest request) {
-        return ResponseEntity.ok(adminSettingsService.updateReferralCap(request));
+    public ResponseEntity<AdminSettingsDto> updateReferralCap(@RequestBody UpdateAdminSettingsRequest request, org.springframework.security.core.Authentication authentication) {
+        return ResponseEntity.ok(adminSettingsService.updateReferralCap(request, authentication.getName()));
     }
 }
