@@ -16,4 +16,6 @@ public interface NotificationService {
 
     void notifyContactRequestApproved(User requester, User target);
 
+    void sendOtpEmail(String email, String otpCode);
+
 }

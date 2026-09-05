@@ -68,6 +68,15 @@ public class EmailNotificationService implements NotificationService {
         );
     }
 
+    @Override
+    public void sendOtpEmail(String email, String otpCode) {
+        sendEmail(
+                email,
+                "Verification Code - Iskcon Devotee Career Portal",
+                "Hare Krishna,\n\nYour verification code is: " + otpCode + "\n\nThis code is valid for 10 minutes.\n\nIf you did not request this code, please ignore this email."
+        );
+    }
+
     private void sendEmail(String to, String subject, String text) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();

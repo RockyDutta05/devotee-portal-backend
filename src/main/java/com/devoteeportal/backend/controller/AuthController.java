@@ -39,4 +39,16 @@ public class AuthController {
         PresignResponse response = authService.generateProfilePicturePresignedUrl(request);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<?> sendOtp(@RequestBody java.util.Map<String, String> request) {
+        authService.generateAndSendOtp(request.get("email"));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody java.util.Map<String, String> request) {
+        authService.verifyOtp(request.get("email"), request.get("code"));
+        return ResponseEntity.ok().build();
+    }
 }

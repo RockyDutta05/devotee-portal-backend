@@ -42,6 +42,7 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
     private final NotificationService notificationService;
     private final S3Presigner s3Presigner;
+    private final com.devoteeportal.backend.repository.OtpRepository otpRepository;
 
     @Value("${app.r2.bucket-name}")
     private String bucketName;
@@ -53,6 +54,13 @@ public class AuthService {
     public UserDto signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email is already in use");
+        }
+
+        com.devoteeportal.backend.entity.Otp otp = otpRepository.findTopByEmailOrderByCreatedAtDesc(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Email has not been verified"));
+
+        if (!otp.isVerified()) {
+            throw new IllegalArgumentException("Email has not been verified");
         }
 
         User user = User.builder()
@@ -135,6 +143,46 @@ public class AuthService {
                 .fileUrl(publicFileUrl)
                 .objectKey(objectKey)
                 .build();
+    }
+
+    @Transactional
+    public void generateAndSendOtp(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email is already in use");
+        }
+
+        // Generate 4-digit code
+        String code = String.format("%04d", new java.util.Random().nextInt(10000));
+        
+        com.devoteeportal.backend.entity.Otp otp = com.devoteeportal.backend.entity.Otp.builder()
+                .email(email)
+                .code(code)
+                .expiresAt(java.time.LocalDateTime.now().plusMinutes(10))
+                .verified(false)
+                .build();
+                
+        // Delete any old OTPs for this email to prevent clutter
+        otpRepository.deleteByEmail(email);
+        otpRepository.save(otp);
+        
+        notificationService.sendOtpEmail(email, code);
+    }
+
+    @Transactional
+    public void verifyOtp(String email, String code) {
+        com.devoteeportal.backend.entity.Otp otp = otpRepository.findTopByEmailOrderByCreatedAtDesc(email)
+                .orElseThrow(() -> new IllegalArgumentException("No OTP found for this email"));
+
+        if (otp.getExpiresAt().isBefore(java.time.LocalDateTime.now())) {
+            throw new IllegalArgumentException("OTP has expired. Please request a new one.");
+        }
+
+        if (!otp.getCode().equals(code)) {
+            throw new IllegalArgumentException("Invalid OTP code.");
+        }
+
+        otp.setVerified(true);
+        otpRepository.save(otp);
     }
 
     private UserDto mapToDto(User user) {
