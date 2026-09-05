@@ -42,7 +42,7 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/health", "/api/auth/signup", "/api/auth/login").permitAll()
+                .requestMatchers("/api/health", "/api/auth/signup", "/api/auth/login", "/api/auth/send-otp", "/api/auth/verify-otp", "/api/auth/presign-profile").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
