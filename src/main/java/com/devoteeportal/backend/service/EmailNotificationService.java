@@ -78,7 +78,7 @@ public class EmailNotificationService implements NotificationService {
         );
     }
 
-    @Value("${spring.mail.username}")
+    @Value("${app.mail.from:noreply@devoteeportal.com}")
     private String fromEmail;
 
     private void sendEmail(String to, String subject, String text) {
