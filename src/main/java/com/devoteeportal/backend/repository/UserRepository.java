@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
     List<User> findByApprovalStatus(ApprovalStatus approvalStatus);
-
+    List<User> findByApprovalStatus(ApprovalStatus approvalStatus, org.springframework.data.domain.Sort sort);
     @Query("SELECT u FROM User u WHERE u.approvalStatus = :approvalStatus AND " +
            "(:search IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +

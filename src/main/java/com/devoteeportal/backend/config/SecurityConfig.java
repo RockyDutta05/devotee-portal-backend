@@ -56,9 +56,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Allow the frontend URL (or specific origins from env)
-        configuration.setAllowedOrigins(Arrays.asList(
-            System.getenv("FRONTEND_URL") != null ? System.getenv("FRONTEND_URL") : "http://localhost:5173"
-        ));
+        if (System.getenv("FRONTEND_URL") != null) {
+            configuration.setAllowedOrigins(Arrays.asList(System.getenv("FRONTEND_URL")));
+        } else {
+            configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "http://192.168.*:*", "http://10.*:*", "http://172.*:*"));
+        }
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);

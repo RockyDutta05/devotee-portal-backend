@@ -30,4 +30,13 @@ public class R2Config {
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
                 .build();
     }
+
+    @Bean
+    public software.amazon.awssdk.services.s3.S3Client s3Client() {
+        return software.amazon.awssdk.services.s3.S3Client.builder()
+                .region(Region.of("auto"))
+                .endpointOverride(URI.create(endpointUrl))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+                .build();
+    }
 }

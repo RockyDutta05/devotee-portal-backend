@@ -29,9 +29,14 @@ public class AdminService {
         } else if ("createdAt asc".equalsIgnoreCase(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "createdAt");
         }
+        List<User> users;
+        if (search == null || search.trim().isEmpty()) {
+            users = userRepository.findByApprovalStatus(ApprovalStatus.PENDING, sort);
+        } else {
+            users = userRepository.findPendingSignupsWithFilters(ApprovalStatus.PENDING, search, sort);
+        }
         
-        return userRepository.findPendingSignupsWithFilters(ApprovalStatus.PENDING, search, sort)
-                .stream()
+        return users.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }

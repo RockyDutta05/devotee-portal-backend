@@ -115,6 +115,18 @@ public class ResumeService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Validate file extension
+        String fileName = request.getFileName();
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1).toLowerCase();
+        }
+        java.util.List<String> allowedExtensions = java.util.List.of("pdf", "doc", "docx", "jpg", "jpeg", "png");
+        if (!allowedExtensions.contains(extension)) {
+            throw new IllegalArgumentException("Invalid file extension. Allowed extensions are: " + String.join(", ", allowedExtensions));
+        }
+
         String objectKey = "resumes/" + user.getId() + "/" + UUID.randomUUID() + "-" + request.getFileName();
         
         // Remove https:// or http:// if included in endpointUrl, or just use as base for fileUrl
@@ -125,6 +137,7 @@ public class ResumeService {
                 .bucket(bucketName)
                 .key(objectKey)
                 .contentType(request.getFileType())
+                .contentLength(request.getContentLength())
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(PutObjectPresignRequest.builder()
@@ -152,7 +165,7 @@ public class ResumeService {
 
                 software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(
                         software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest.builder()
-                        .signatureDuration(Duration.ofMinutes(60))
+                        .signatureDuration(Duration.ofMinutes(15))
                         .getObjectRequest(getObjectRequest)
                         .build());
                 finalFileUrl = presignedRequest.url().toString();
