@@ -20,6 +20,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.devoteeportal.backend.dto.PresignRequest;
+import com.devoteeportal.backend.dto.PresignResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.time.Duration;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -30,6 +41,13 @@ public class AuthService {
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
     private final NotificationService notificationService;
+    private final S3Presigner s3Presigner;
+
+    @Value("${app.r2.bucket-name}")
+    private String bucketName;
+    
+    @Value("${app.r2.endpoint-url}")
+    private String endpointUrl;
 
     @Transactional
     public UserDto signup(SignupRequest request) {
@@ -48,6 +66,7 @@ public class AuthService {
                 .phone(request.getPhone())
                 .currentEmployer(request.getCurrentEmployer())
                 .hideEmployer(request.getHideEmployer())
+                .profilePictureUrl(request.getProfilePictureUrl())
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -80,7 +99,66 @@ public class AuthService {
                 .build();
     }
 
+    public PresignResponse generateProfilePicturePresignedUrl(PresignRequest request) {
+        String fileName = request.getFileName();
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1).toLowerCase();
+        }
+        java.util.List<String> allowedExtensions = java.util.List.of("jpg", "jpeg", "png");
+        if (!allowedExtensions.contains(extension)) {
+            throw new IllegalArgumentException("Invalid file extension. Allowed extensions are: " + String.join(", ", allowedExtensions));
+        }
+
+        if (request.getContentLength() != null && request.getContentLength() > 5242880) {
+            throw new IllegalArgumentException("File size cannot exceed 5 MB for profile pictures");
+        }
+
+        String objectKey = "profiles/temp/" + UUID.randomUUID() + "-" + request.getFileName();
+        String publicFileUrl = endpointUrl + "/" + bucketName + "/" + objectKey;
+
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(objectKey)
+                .contentType(request.getFileType())
+                .contentLength(request.getContentLength())
+                .build();
+
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(15))
+                .putObjectRequest(putObjectRequest)
+                .build());
+
+        return PresignResponse.builder()
+                .presignedUrl(presignedRequest.url().toString())
+                .fileUrl(publicFileUrl)
+                .objectKey(objectKey)
+                .build();
+    }
+
     private UserDto mapToDto(User user) {
+        String finalFileUrl = user.getProfilePictureUrl();
+        String prefix = endpointUrl + "/" + bucketName + "/";
+        if (finalFileUrl != null && finalFileUrl.startsWith(prefix)) {
+            try {
+                String objectKey = finalFileUrl.substring(prefix.length());
+                software.amazon.awssdk.services.s3.model.GetObjectRequest getObjectRequest = software.amazon.awssdk.services.s3.model.GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(objectKey)
+                        .build();
+
+                software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(
+                        software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest.builder()
+                        .signatureDuration(Duration.ofMinutes(15))
+                        .getObjectRequest(getObjectRequest)
+                        .build());
+                finalFileUrl = presignedRequest.url().toString();
+            } catch (Exception e) {
+                // Fallback to original URL if presigning fails
+            }
+        }
+
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -92,6 +170,7 @@ public class AuthService {
                 .phone(user.getPhone())
                 .currentEmployer(user.getCurrentEmployer())
                 .hideEmployer(user.getHideEmployer())
+                .profilePictureUrl(finalFileUrl)
                 .role(user.getRole())
                 .approvalStatus(user.getApprovalStatus())
                 .createdAt(user.getCreatedAt())

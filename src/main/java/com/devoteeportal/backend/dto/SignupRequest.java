@@ -31,4 +31,5 @@ public class SignupRequest {
     private String phone;
     private String currentEmployer;
     private Boolean hideEmployer;
+    private String profilePictureUrl;
 }

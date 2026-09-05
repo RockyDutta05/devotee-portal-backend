@@ -4,6 +4,8 @@ import com.devoteeportal.backend.dto.AuthResponse;
 import com.devoteeportal.backend.dto.LoginRequest;
 import com.devoteeportal.backend.dto.SignupRequest;
 import com.devoteeportal.backend.dto.UserDto;
+import com.devoteeportal.backend.dto.PresignRequest;
+import com.devoteeportal.backend.dto.PresignResponse;
 import com.devoteeportal.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +26,17 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
     }
 
+
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/presign-profile")
+    public ResponseEntity<PresignResponse> presignProfile(@Valid @RequestBody PresignRequest request) {
+        PresignResponse response = authService.generateProfilePicturePresignedUrl(request);
         return ResponseEntity.ok(response);
     }
 }

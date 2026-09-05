@@ -44,6 +44,8 @@ public class User {
     private String jobTitle;
 
     private String location;
+    
+    private String profilePictureUrl;
 
     private Boolean hideEmployer;
 
