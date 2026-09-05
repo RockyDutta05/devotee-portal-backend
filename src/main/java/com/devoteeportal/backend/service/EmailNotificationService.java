@@ -77,18 +77,23 @@ public class EmailNotificationService implements NotificationService {
         );
     }
 
-    private void sendEmail(String to, String subject, String text) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
-            message.setFrom("noreply@devoteeportal.com");
+    @Value("${spring.mail.username}")
+    private String fromEmail;
 
-            javaMailSender.send(message);
-            log.info("Email sent to {}", to);
-        } catch (Exception e) {
-            log.warn("Failed to send email to {}. SMTP may not be configured properly. Error: {}", to, e.getMessage());
-        }
+    private void sendEmail(String to, String subject, String text) {
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(to);
+                message.setSubject(subject);
+                message.setText(text);
+                message.setFrom(fromEmail);
+
+                javaMailSender.send(message);
+                log.info("Email sent to {}", to);
+            } catch (Exception e) {
+                log.warn("Failed to send email to {}. SMTP may not be configured properly. Error: {}", to, e.getMessage());
+            }
+        });
     }
 }
