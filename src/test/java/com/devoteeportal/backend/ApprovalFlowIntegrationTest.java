@@ -4,7 +4,7 @@ import com.devoteeportal.backend.dto.LoginRequest;
 import com.devoteeportal.backend.dto.SignupRequest;
 import com.devoteeportal.backend.entity.Role;
 import com.devoteeportal.backend.entity.User;
-import com.devoteeportal.backend.entity.UserStatus;
+import com.devoteeportal.backend.entity.ApprovalStatus;
 import com.devoteeportal.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -80,7 +80,7 @@ public class ApprovalFlowIntegrationTest extends BaseIntegrationTest {
 
         User realAdmin = userRepository.findByEmail("realadmin@example.com").orElseThrow();
         realAdmin.setRole(Role.ADMIN);
-        realAdmin.setStatus(UserStatus.APPROVED);
+        realAdmin.setApprovalStatus(ApprovalStatus.APPROVED);
         userRepository.save(realAdmin);
 
         LoginRequest adminLogin = new LoginRequest();
