@@ -10,5 +10,6 @@ import java.util.UUID;
 @Repository
 public interface ReferralWillingnessRepository extends JpaRepository<ReferralWillingness, UUID> {
     List<ReferralWillingness> findByIsWillingTrue();
+    long countByIsWillingTrue();
     java.util.Optional<ReferralWillingness> findByUserId(UUID userId);
 }

@@ -1,6 +1,7 @@
 package com.devoteeportal.backend.repository;
 
 import com.devoteeportal.backend.entity.ConnectRequest;
+import com.devoteeportal.backend.entity.RequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +12,5 @@ import java.util.UUID;
 public interface ConnectRequestRepository extends JpaRepository<ConnectRequest, UUID> {
     List<ConnectRequest> findByTargetId(UUID targetId);
     List<ConnectRequest> findByRequesterId(UUID requesterId);
+    long countByTargetIdAndStatus(UUID targetId, RequestStatus status);
 }

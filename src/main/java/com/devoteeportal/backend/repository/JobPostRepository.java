@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface JobPostRepository extends JpaRepository<JobPost, UUID> {
     List<JobPost> findAllByOrderByCreatedAtDesc();
+    long countByStatusLabel(String label);
 }

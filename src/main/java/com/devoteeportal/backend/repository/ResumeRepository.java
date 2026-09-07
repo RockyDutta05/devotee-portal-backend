@@ -11,5 +11,6 @@ import java.util.UUID;
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, UUID> {
     List<Resume> findByUserId(UUID userId);
+    long countByUserId(UUID userId);
     List<Resume> findByHiddenFromPublicSearchFalseAndStatus(ResumeStatus status);
 }
