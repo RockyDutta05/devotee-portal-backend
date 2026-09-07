@@ -32,4 +32,9 @@ public class ConnectRequestController {
     public ResponseEntity<ConnectRequestDto> rejectRequest(Authentication authentication, @PathVariable UUID id) {
         return ResponseEntity.ok(networkingService.updateConnectRequestStatus(authentication.getName(), id, RequestStatus.REJECTED));
     }
+
+    @GetMapping("/incoming")
+    public ResponseEntity<java.util.List<ConnectRequestDto>> getIncomingRequests(Authentication authentication) {
+        return ResponseEntity.ok(networkingService.getIncomingConnectRequests(authentication.getName()));
+    }
 }

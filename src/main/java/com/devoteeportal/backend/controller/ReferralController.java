@@ -42,4 +42,21 @@ public class ReferralController {
         referralService.addReferralCompany(authentication.getName(), companyId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/requests/incoming")
+    public ResponseEntity<List<ReferralRequestDto>> getIncomingRequests(Authentication authentication) {
+        return ResponseEntity.ok(referralService.getIncomingRequests(authentication.getName()));
+    }
+
+    @PutMapping("/requests/{id}/approve")
+    public ResponseEntity<Void> approveRequest(Authentication authentication, @PathVariable UUID id) {
+        referralService.approveRequest(authentication.getName(), id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/requests/{id}/reject")
+    public ResponseEntity<Void> rejectRequest(Authentication authentication, @PathVariable UUID id) {
+        referralService.rejectRequest(authentication.getName(), id);
+        return ResponseEntity.ok().build();
+    }
 }

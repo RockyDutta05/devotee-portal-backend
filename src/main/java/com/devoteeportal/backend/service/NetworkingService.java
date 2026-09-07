@@ -112,6 +112,7 @@ public class NetworkingService {
         ContactInfoRequestDto.ContactInfoRequestDtoBuilder builder = ContactInfoRequestDto.builder()
                 .id(request.getId())
                 .requesterId(request.getRequester().getId())
+                .requesterName(request.getRequester().getName())
                 .targetId(request.getTarget().getId())
                 .reason(request.getReason())
                 .status(request.getStatus())
@@ -131,11 +132,32 @@ public class NetworkingService {
         return ConnectRequestDto.builder()
                 .id(request.getId())
                 .requesterId(request.getRequester().getId())
+                .requesterName(request.getRequester().getName())
                 .targetId(request.getTarget().getId())
                 .message(request.getMessage())
                 .status(request.getStatus())
                 .createdAt(request.getCreatedAt())
                 .updatedAt(request.getUpdatedAt())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<ContactInfoRequestDto> getIncomingContactRequests(String email) {
+        User targetUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return contactInfoRequestRepository.findByTargetId(targetUser.getId())
+                .stream()
+                .map(this::mapToDto)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<ConnectRequestDto> getIncomingConnectRequests(String email) {
+        User targetUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return connectRequestRepository.findByTargetId(targetUser.getId())
+                .stream()
+                .map(this::mapToDto)
+                .collect(java.util.stream.Collectors.toList());
     }
 }

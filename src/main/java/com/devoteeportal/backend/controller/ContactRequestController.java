@@ -32,4 +32,9 @@ public class ContactRequestController {
     public ResponseEntity<ContactInfoRequestDto> rejectRequest(Authentication authentication, @PathVariable UUID id) {
         return ResponseEntity.ok(networkingService.updateContactInfoRequestStatus(authentication.getName(), id, RequestStatus.REJECTED));
     }
+
+    @GetMapping("/incoming")
+    public ResponseEntity<java.util.List<ContactInfoRequestDto>> getIncomingRequests(Authentication authentication) {
+        return ResponseEntity.ok(networkingService.getIncomingContactRequests(authentication.getName()));
+    }
 }

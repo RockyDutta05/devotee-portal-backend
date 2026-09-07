@@ -12,6 +12,10 @@ public interface NotificationService {
 
     void notifyReferralRequestReceived(User referrer, User requester, String companyName);
 
+    void notifyReferralRequestApproved(User requester, User referrer, String companyName);
+
+    void notifyReferralRequestRejected(User requester, User referrer, String companyName);
+
     void notifyContactRequestReceived(User target, User requester);
 
     void notifyContactRequestApproved(User requester, User target);

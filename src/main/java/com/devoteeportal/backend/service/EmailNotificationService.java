@@ -44,11 +44,32 @@ public class EmailNotificationService implements NotificationService {
 
     @Override
     public void notifyReferralRequestReceived(User referrer, User requester, String companyName) {
-        sendEmail(
-                referrer.getEmail(),
-                "New Referral Request",
-                "Hare Krishna " + referrer.getName() + ",\n\nYou have received a new referral request from " + requester.getName() + " for a position at " + companyName + ".\nPlease log in to review the request."
-        );
+        String subject = "New Referral Request for " + companyName;
+        String text = String.format("Hare Krishna %s,\n\nYou have received a new referral request from %s for %s.\nPlease log in to the portal to review the request.\n\nYour Servants,\nDevotee Career Portal Team",
+                referrer.getInitiatedName() != null ? referrer.getInitiatedName() : referrer.getName(),
+                requester.getName(),
+                companyName);
+        sendEmail(referrer.getEmail(), subject, text);
+    }
+
+    @Override
+    public void notifyReferralRequestApproved(User requester, User referrer, String companyName) {
+        String subject = "Referral Request Approved for " + companyName;
+        String text = String.format("Hare Krishna %s,\n\nYour referral request for %s has been approved by %s.\nPlease log in to the portal to view the details.\n\nYour Servants,\nDevotee Career Portal Team",
+                requester.getInitiatedName() != null ? requester.getInitiatedName() : requester.getName(),
+                companyName,
+                referrer.getName());
+        sendEmail(requester.getEmail(), subject, text);
+    }
+
+    @Override
+    public void notifyReferralRequestRejected(User requester, User referrer, String companyName) {
+        String subject = "Referral Request Update for " + companyName;
+        String text = String.format("Hare Krishna %s,\n\nWe wanted to let you know that %s is unable to provide a referral for %s at this time.\n\nYour Servants,\nDevotee Career Portal Team",
+                requester.getInitiatedName() != null ? requester.getInitiatedName() : requester.getName(),
+                referrer.getName(),
+                companyName);
+        sendEmail(requester.getEmail(), subject, text);
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.UUID;
 public class ConnectRequestDto {
     private UUID id;
     private UUID requesterId;
+    private String requesterName;
     private UUID targetId;
     private String message;
     private RequestStatus status;

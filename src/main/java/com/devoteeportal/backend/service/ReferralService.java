@@ -120,6 +120,7 @@ public class ReferralService {
         return ReferralRequestDto.builder()
                 .id(savedRequest.getId())
                 .requesterId(savedRequest.getRequester().getId())
+                .requesterName(savedRequest.getRequester().getName())
                 .referrerId(savedRequest.getReferrer().getId())
                 .company(CompanyDto.builder()
                         .id(company.getId())
@@ -161,5 +162,66 @@ public class ReferralService {
                     .build();
             referralCompanyRepository.save(rc);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReferralRequestDto> getIncomingRequests(String email) {
+        User referrer = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Referrer not found"));
+        
+        return referralRequestRepository.findByReferrerIdOrderByCreatedAtDesc(referrer.getId())
+                .stream()
+                .map(r -> ReferralRequestDto.builder()
+                        .id(r.getId())
+                        .requesterId(r.getRequester().getId())
+                        .requesterName(r.getRequester().getName())
+                        .referrerId(r.getReferrer().getId())
+                        .company(CompanyDto.builder()
+                                .id(r.getCompany().getId())
+                                .name(r.getCompany().getName())
+                                .approved(r.getCompany().getApproved())
+                                .build())
+                        .jobIdOrLink(r.getJobIdOrLink())
+                        .jobTitle(r.getJobTitle())
+                        .comments(r.getComments())
+                        .status(r.getStatus())
+                        .createdAt(r.getCreatedAt())
+                        .updatedAt(r.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void approveRequest(String email, UUID requestId) {
+        User referrer = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        ReferralRequest request = referralRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+        
+        if (!request.getReferrer().getId().equals(referrer.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+        
+        request.setStatus(ReferralRequestStatus.ACCEPTED);
+        referralRequestRepository.save(request);
+        
+        notificationService.notifyReferralRequestApproved(request.getRequester(), referrer, request.getCompany().getName());
+    }
+
+    @Transactional
+    public void rejectRequest(String email, UUID requestId) {
+        User referrer = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        ReferralRequest request = referralRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+        
+        if (!request.getReferrer().getId().equals(referrer.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+        
+        request.setStatus(ReferralRequestStatus.REJECTED);
+        referralRequestRepository.save(request);
+        
+        notificationService.notifyReferralRequestRejected(request.getRequester(), referrer, request.getCompany().getName());
     }
 }

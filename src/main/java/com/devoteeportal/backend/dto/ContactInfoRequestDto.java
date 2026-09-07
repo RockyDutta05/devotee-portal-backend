@@ -12,6 +12,7 @@ import java.util.UUID;
 public class ContactInfoRequestDto {
     private UUID id;
     private UUID requesterId;
+    private String requesterName;
     private UUID targetId;
     private String reason;
     private RequestStatus status;

@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface ReferralRequestRepository extends JpaRepository<ReferralRequest, UUID> {
     long countByRequesterIdAndStatus(UUID requesterId, ReferralRequestStatus status);
+    java.util.List<ReferralRequest> findByReferrerIdOrderByCreatedAtDesc(UUID referrerId);
 }

@@ -12,6 +12,7 @@ import java.util.UUID;
 public class ReferralRequestDto {
     private UUID id;
     private UUID requesterId;
+    private String requesterName;
     private UUID referrerId;
     private CompanyDto company;
     private String jobIdOrLink;
