@@ -123,6 +123,8 @@ public class NetworkingService {
         if (request.getStatus() == RequestStatus.APPROVED) {
             builder.contactEmail(request.getTarget().getEmail());
             builder.contactPhone(request.getTarget().getPhone());
+            builder.requesterEmail(request.getRequester().getEmail());
+            builder.requesterPhone(request.getRequester().getPhone());
         }
 
         return builder.build();

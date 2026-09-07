@@ -22,4 +22,6 @@ public class ContactInfoRequestDto {
     // These fields are only populated if status == APPROVED
     private String contactPhone;
     private String contactEmail;
+    private String requesterEmail;
+    private String requesterPhone;
 }
