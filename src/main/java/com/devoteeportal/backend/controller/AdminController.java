@@ -1,5 +1,6 @@
 package com.devoteeportal.backend.controller;
 
+import com.devoteeportal.backend.dto.AdminDashboardStatsDto;
 import com.devoteeportal.backend.dto.AdminActionLogDto;
 import com.devoteeportal.backend.dto.BulkActionRequest;
 import com.devoteeportal.backend.dto.UserDto;
@@ -33,6 +34,12 @@ public class AdminController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String sortBy) {
         return ResponseEntity.ok(adminService.getPendingSignups(search, sortBy));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/stats")
+    public ResponseEntity<AdminDashboardStatsDto> getDashboardStats() {
+        return ResponseEntity.ok(adminService.getDashboardStats());
     }
 
     @PreAuthorize("hasRole('ADMIN')")

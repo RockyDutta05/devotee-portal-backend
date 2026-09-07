@@ -5,6 +5,8 @@ import com.devoteeportal.backend.entity.ActionType;
 import com.devoteeportal.backend.entity.ApprovalStatus;
 import com.devoteeportal.backend.entity.User;
 import com.devoteeportal.backend.repository.UserRepository;
+import com.devoteeportal.backend.repository.JobPostRepository;
+import com.devoteeportal.backend.dto.AdminDashboardStatsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,16 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final UserRepository userRepository;
+    private final JobPostRepository jobPostRepository;
     private final NotificationService notificationService;
     private final AdminAuditService adminAuditService;
+
+    public AdminDashboardStatsDto getDashboardStats() {
+        return AdminDashboardStatsDto.builder()
+                .totalUsers(userRepository.count())
+                .activeJobs(jobPostRepository.count())
+                .build();
+    }
 
     public List<UserDto> getPendingSignups(String search, String sortBy) {
         Sort sort = Sort.unsorted();
