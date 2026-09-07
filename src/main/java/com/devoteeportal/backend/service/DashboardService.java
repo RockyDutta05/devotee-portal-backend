@@ -27,7 +27,7 @@ public class DashboardService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
-        long availableJobs = jobPostRepository.countByStatusLabel("OPEN");
+        long availableJobs = jobPostRepository.countByStatusLabelIgnoreCase("OPEN");
         long myResumes = resumeRepository.countByUserId(currentUser.getId());
         long referralOpportunities = referralWillingnessRepository.countByIsWillingTrue();
         
