@@ -42,7 +42,13 @@ public class ReferralService {
         List<WillingReferrerDto> referrers = new ArrayList<>();
         
         // 1. Direct company referrers first
-        List<ReferralCompany> directCompanies = referralCompanyRepository.findByCompanyId(companyId);
+        List<ReferralCompany> directCompanies;
+        if (companyId != null) {
+            directCompanies = referralCompanyRepository.findByCompanyId(companyId);
+        } else {
+            directCompanies = referralCompanyRepository.findAll();
+        }
+        
         Set<UUID> directUserIds = directCompanies.stream()
                 .map(rc -> rc.getUser().getId())
                 .collect(Collectors.toSet());
@@ -54,6 +60,7 @@ public class ReferralService {
                     .name(u.getName())
                     .initiatedName(u.getInitiatedName())
                     .currentEmployer(u.getCurrentEmployer()) // conditional rules can be applied if needed
+                    .companies(List.of(rc.getCompany().getName()))
                     .directCompanyMatch(true)
                     .build());
         }
@@ -68,6 +75,7 @@ public class ReferralService {
                         .name(u.getName())
                         .initiatedName(u.getInitiatedName())
                         .currentEmployer(u.getCurrentEmployer())
+                        .companies(referralCompanyRepository.findByUserId(u.getId()).stream().map(refc -> refc.getCompany().getName()).collect(Collectors.toList()))
                         .directCompanyMatch(false)
                         .build());
             }

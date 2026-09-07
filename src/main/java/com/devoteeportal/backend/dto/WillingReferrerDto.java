@@ -12,5 +12,6 @@ public class WillingReferrerDto {
     private String name;
     private String initiatedName;
     private String currentEmployer;
+    private java.util.List<String> companies;
     private boolean directCompanyMatch;
 }

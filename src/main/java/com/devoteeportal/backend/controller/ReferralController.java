@@ -20,7 +20,7 @@ public class ReferralController {
     private final ReferralService referralService;
 
     @GetMapping("/willing-referrers")
-    public ResponseEntity<List<WillingReferrerDto>> getWillingReferrers(@RequestParam UUID companyId) {
+    public ResponseEntity<List<WillingReferrerDto>> getWillingReferrers(@RequestParam(required = false) UUID companyId) {
         return ResponseEntity.ok(referralService.getWillingReferrers(companyId));
     }
 
