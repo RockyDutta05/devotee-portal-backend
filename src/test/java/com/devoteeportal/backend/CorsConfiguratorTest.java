@@ -13,8 +13,10 @@ import software.amazon.awssdk.services.s3.model.PutBucketCorsRequest;
 
 import java.net.URI;
 import java.util.Arrays;
+import org.junit.jupiter.api.Disabled;
 
 @SpringBootTest
+@Disabled("This is a utility script that accesses real AWS credentials, not a standard test")
 public class CorsConfiguratorTest {
 
     @Value("${app.r2.access-key}")

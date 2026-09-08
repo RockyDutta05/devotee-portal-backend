@@ -90,7 +90,7 @@ public class ReferralService {
                 .orElseThrow(() -> new RuntimeException("Requester not found"));
 
         // Enforce Cap
-        long pendingRequests = referralRequestRepository.countByRequesterIdAndStatus(requester.getId(), ReferralRequestStatus.PENDING);
+        long pendingRequests = referralRequestRepository.countByRequesterIdAndReferrerIdAndStatus(requester.getId(), request.getReferrerId(), ReferralRequestStatus.PENDING);
         
         int cap = adminSettingsService.getReferralRequestCapPerPerson();
         if (pendingRequests >= cap) {
