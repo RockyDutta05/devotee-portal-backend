@@ -52,7 +52,7 @@ public class CompanyService {
         Company company = Company.builder()
                 .name(trimmedName)
                 .addedByUserId(user)
-                .approved(false) // requires admin approval eventually if needed
+                .approved(true) // defaults to true as requested
                 .build();
 
         return mapToDto(companyRepository.save(company));

@@ -17,12 +17,14 @@ public class MyProfileResponse {
     private Integer chantingRounds;
     private String connectedToName;
     private String connectedToContact;
+    private String connectedToDesignation;
     private String email;
     private String phone;
     private String currentEmployer;
     private String jobTitle;
     private String location;
     private Boolean hideEmployer;
+    private String photoUrl;
     private Role role;
     private ApprovalStatus approvalStatus;
     private LocalDateTime createdAt;

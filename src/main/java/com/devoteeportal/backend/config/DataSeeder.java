@@ -15,8 +15,17 @@ public class DataSeeder {
     @Bean
     public CommandLineRunner initAdmin(UserRepository userRepository, PasswordEncoder passwordEncoder, com.devoteeportal.backend.repository.JobStatusOptionRepository jobStatusOptionRepository) {
         return args -> {
-            if (!userRepository.existsByEmail("admin@gmail.com")) {
-                User admin = User.builder()
+            // Ensure admin user with correct credentials exists
+            java.util.Optional<com.devoteeportal.backend.entity.User> existing = userRepository.findByEmail("admin@example.com");
+            if (existing.isPresent()) {
+                com.devoteeportal.backend.entity.User admin = existing.get();
+                admin.setEmail("admin@gmail.com");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole(Role.ADMIN);
+                admin.setApprovalStatus(ApprovalStatus.APPROVED);
+                userRepository.save(admin);
+            } else if (!userRepository.existsByEmail("admin@gmail.com")) {
+                com.devoteeportal.backend.entity.User admin = com.devoteeportal.backend.entity.User.builder()
                         .name("System Admin")
                         .email("admin@gmail.com")
                         .password(passwordEncoder.encode("admin123"))

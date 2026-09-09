@@ -13,7 +13,11 @@ public class PublicProfileResponse {
     private String initiatedName;
     private Integer chantingRounds;
     private String connectedToName;
+    private String connectedToDesignation;
     private String currentEmployer; 
     private String jobTitle;
     private String location;
+    private String photoUrl;
+    private String email;
+    private String phone;
 }

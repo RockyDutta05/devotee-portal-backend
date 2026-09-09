@@ -12,9 +12,12 @@ public class SignupRequest {
 
     private String initiatedName;
 
+    @jakarta.validation.constraints.Min(value = 0, message = "Chanting rounds cannot be less than 0")
+    @jakarta.validation.constraints.Max(value = 128, message = "Chanting rounds cannot exceed 128")
     private Integer chantingRounds;
 
     private String connectedToName;
+    private String connectedToDesignation;
     @NotBlank(message = "Counselor/Mentor contact is required")
     @Pattern(regexp = "^\\d{10}$", message = "Contact must be exactly 10 digits")
     private String connectedToContact;
@@ -31,5 +34,5 @@ public class SignupRequest {
     private String phone;
     private String currentEmployer;
     private Boolean hideEmployer;
-    private String profilePictureUrl;
+    private String photoUrl;
 }

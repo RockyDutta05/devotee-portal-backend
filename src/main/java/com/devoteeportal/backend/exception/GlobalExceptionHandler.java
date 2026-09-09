@@ -12,72 +12,55 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(PendingApprovalException.class)
-    public ResponseEntity<Map<String, String>> handlePendingApproval(PendingApprovalException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", "403_PENDING_APPROVAL");
-        response.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    public ResponseEntity<Map<String, Object>> handlePendingApproval(PendingApprovalException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(RejectedApprovalException.class)
-    public ResponseEntity<Map<String, String>> handleRejectedApproval(RejectedApprovalException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", "403_REJECTED");
-        response.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    public ResponseEntity<Map<String, Object>> handleRejectedApproval(RejectedApprovalException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ReferralLimitExceededException.class)
-    public ResponseEntity<Map<String, String>> handleReferralLimitExceeded(ReferralLimitExceededException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", "400_REFERRAL_LIMIT_EXCEEDED");
-        response.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    public ResponseEntity<Map<String, Object>> handleReferralLimitExceeded(ReferralLimitExceededException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(org.springframework.web.bind.MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        StringBuilder sb = new StringBuilder();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((org.springframework.validation.FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            sb.append(((org.springframework.validation.FieldError) error).getField()).append(": ").append(error.getDefaultMessage()).append("; ");
         });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(sb.toString(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", "Bad Request");
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
-        Map<String, String> response = new HashMap<>();
-        
+    public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
         if (ex.getMessage() != null && ex.getMessage().toLowerCase().contains("not authorized")) {
-            response.put("error", "Forbidden");
-            response.put("message", ex.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            return buildErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
         }
         
         if (ex.getMessage() != null && ex.getMessage().toLowerCase().contains("not found")) {
-            response.put("error", "Not Found");
-            response.put("message", ex.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
 
         if (ex instanceof org.springframework.security.core.AuthenticationException) {
-            response.put("error", "Unauthorized");
-            response.put("message", "Invalid email or password");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+            return buildErrorResponse("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
 
-        response.put("error", "Internal Server Error");
-        response.put("message", "An unexpected error occurred");
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildErrorResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, HttpStatus status) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", message);
+        response.put("status", status.value());
+        return new ResponseEntity<>(response, status);
     }
 }

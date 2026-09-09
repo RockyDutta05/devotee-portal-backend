@@ -29,7 +29,8 @@ public class ProfileController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<PublicProfileResponse> getPublicProfile(@PathVariable UUID userId) {
-        return ResponseEntity.ok(profileService.getPublicProfile(userId));
+    public ResponseEntity<PublicProfileResponse> getPublicProfile(Authentication authentication, @PathVariable UUID userId) {
+        String requesterEmail = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(profileService.getPublicProfile(requesterEmail, userId));
     }
 }

@@ -11,10 +11,10 @@ public class JobPostRequest {
     @NotBlank(message = "Title is mandatory")
     private String title;
     
-    @NotNull(message = "Company ID is mandatory")
     private UUID companyId;
     
-    @NotBlank(message = "Job ID or Link is mandatory")
+    private String companyNameRaw;
+    
     private String jobIdOrLink;
     
     private String comments;

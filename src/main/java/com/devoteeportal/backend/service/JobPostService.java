@@ -29,11 +29,8 @@ public class JobPostService {
     private final CompanyRepository companyRepository;
     private final JobStatusOptionRepository jobStatusOptionRepository;
 
-    public List<JobPostDto> getAllJobPosts() {
-        return jobPostRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+    public org.springframework.data.domain.Page<JobPostDto> getAllJobPosts(org.springframework.data.domain.Pageable pageable) {
+        return jobPostRepository.findAll(pageable).map(this::mapToDto);
     }
 
     public List<JobStatusOptionDto> getAllJobStatuses() {
@@ -51,8 +48,7 @@ public class JobPostService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Company company = companyRepository.findById(request.getCompanyId())
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+        Company company = resolveCompany(request, user);
 
         JobStatusOption status = jobStatusOptionRepository.findById(request.getStatusId())
                 .orElseThrow(() -> new RuntimeException("Status not found"));
@@ -87,9 +83,8 @@ public class JobPostService {
         if (request.getComments() != null) jobPost.setComments(request.getComments());
         if (request.getNoticePeriodRequirement() != null) jobPost.setNoticePeriodRequirement(request.getNoticePeriodRequirement());
 
-        if (request.getCompanyId() != null) {
-            Company company = companyRepository.findById(request.getCompanyId())
-                    .orElseThrow(() -> new RuntimeException("Company not found"));
+        if (request.getCompanyId() != null || request.getCompanyNameRaw() != null) {
+            Company company = resolveCompany(request, user);
             jobPost.setCompany(company);
         }
 
@@ -100,6 +95,27 @@ public class JobPostService {
         }
 
         return mapToDto(jobPostRepository.save(jobPost));
+    }
+
+    private Company resolveCompany(JobPostRequest request, User user) {
+        if (request.getCompanyId() != null) {
+            return companyRepository.findById(request.getCompanyId())
+                    .orElseThrow(() -> new RuntimeException("Company not found"));
+        } else if (request.getCompanyNameRaw() != null && !request.getCompanyNameRaw().isBlank()) {
+            String trimmedName = request.getCompanyNameRaw().trim();
+            return companyRepository.findByNameContainingIgnoreCase(trimmedName).stream()
+                    .filter(c -> c.getName().equalsIgnoreCase(trimmedName))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        Company newCompany = Company.builder()
+                                .name(trimmedName)
+                                .addedByUserId(user)
+                                .approved(true)
+                                .build();
+                        return companyRepository.save(newCompany);
+                    });
+        }
+        throw new RuntimeException("Either companyId or companyNameRaw must be provided");
     }
 
     @Transactional

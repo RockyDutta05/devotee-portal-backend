@@ -20,8 +20,9 @@ public class JobPostController {
     private final JobPostService jobPostService;
 
     @GetMapping
-    public ResponseEntity<List<JobPostDto>> getAllJobPosts() {
-        return ResponseEntity.ok(jobPostService.getAllJobPosts());
+    public ResponseEntity<org.springframework.data.domain.Page<JobPostDto>> getAllJobPosts(
+            @org.springframework.data.web.PageableDefault(sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) org.springframework.data.domain.Pageable pageable) {
+        return ResponseEntity.ok(jobPostService.getAllJobPosts(pageable));
     }
 
     @GetMapping("/statuses")

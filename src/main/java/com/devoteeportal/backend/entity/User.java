@@ -31,12 +31,15 @@ public class User {
 
     private String connectedToContact;
 
+    private String connectedToDesignation;
+
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true)
     private String phone;
 
     private String currentEmployer;
@@ -45,7 +48,7 @@ public class User {
 
     private String location;
     
-    private String profilePictureUrl;
+    private String photoUrl;
 
     private Boolean hideEmployer;
 

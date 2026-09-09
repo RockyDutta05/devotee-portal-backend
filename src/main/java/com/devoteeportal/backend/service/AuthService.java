@@ -68,13 +68,14 @@ public class AuthService {
                 .initiatedName(request.getInitiatedName())
                 .chantingRounds(request.getChantingRounds())
                 .connectedToName(request.getConnectedToName())
+                .connectedToDesignation(request.getConnectedToDesignation())
                 .connectedToContact(request.getConnectedToContact())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .currentEmployer(request.getCurrentEmployer())
                 .hideEmployer(request.getHideEmployer())
-                .profilePictureUrl(request.getProfilePictureUrl())
+                .photoUrl(request.getPhotoUrl())
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -186,7 +187,7 @@ public class AuthService {
     }
 
     private UserDto mapToDto(User user) {
-        String finalFileUrl = user.getProfilePictureUrl();
+        String finalFileUrl = user.getPhotoUrl();
         String prefix = endpointUrl + "/" + bucketName + "/";
         if (finalFileUrl != null && finalFileUrl.startsWith(prefix)) {
             try {
@@ -213,12 +214,13 @@ public class AuthService {
                 .initiatedName(user.getInitiatedName())
                 .chantingRounds(user.getChantingRounds())
                 .connectedToName(user.getConnectedToName())
+                .connectedToDesignation(user.getConnectedToDesignation())
                 .connectedToContact(user.getConnectedToContact())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .currentEmployer(user.getCurrentEmployer())
                 .hideEmployer(user.getHideEmployer())
-                .profilePictureUrl(finalFileUrl)
+                .photoUrl(finalFileUrl)
                 .role(user.getRole())
                 .approvalStatus(user.getApprovalStatus())
                 .createdAt(user.getCreatedAt())

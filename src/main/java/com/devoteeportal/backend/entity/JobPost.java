@@ -28,10 +28,9 @@ public class JobPost {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(nullable = false)
     private String jobIdOrLink;
 
     @Column(columnDefinition = "TEXT")

@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, UUID> {
     List<Resume> findByUserId(UUID userId);
     long countByUserId(UUID userId);
-    List<Resume> findByHiddenFromPublicSearchFalseAndStatus(ResumeStatus status);
+    Page<Resume> findByHiddenFromPublicSearchFalseAndStatus(ResumeStatus status, Pageable pageable);
 }

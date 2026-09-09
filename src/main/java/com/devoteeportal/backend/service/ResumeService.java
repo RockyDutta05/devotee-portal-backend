@@ -47,11 +47,9 @@ public class ResumeService {
                 .collect(Collectors.toList());
     }
 
-    public List<ResumeResponse> browsePublicResumes() {
-        return resumeRepository.findByHiddenFromPublicSearchFalseAndStatus(ResumeStatus.ACTIVELY_LOOKING)
-                .stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+    public org.springframework.data.domain.Page<ResumeResponse> browsePublicResumes(org.springframework.data.domain.Pageable pageable) {
+        return resumeRepository.findByHiddenFromPublicSearchFalseAndStatus(ResumeStatus.ACTIVELY_LOOKING, pageable)
+                .map(this::mapToDto);
     }
 
     @Transactional

@@ -77,4 +77,5 @@ public class AdminController {
             Pageable pageable) {
         return ResponseEntity.ok(adminAuditService.getAuditLogs(actionType, startDate, endDate, pageable));
     }
+
 }

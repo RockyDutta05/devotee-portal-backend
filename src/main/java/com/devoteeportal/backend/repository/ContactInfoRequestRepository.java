@@ -13,4 +13,5 @@ public interface ContactInfoRequestRepository extends JpaRepository<ContactInfoR
     List<ContactInfoRequest> findByTargetId(UUID targetId);
     List<ContactInfoRequest> findByRequesterId(UUID requesterId);
     long countByTargetIdAndStatus(UUID targetId, RequestStatus status);
+    boolean existsByRequesterIdAndTargetIdAndStatus(UUID requesterId, UUID targetId, RequestStatus status);
 }

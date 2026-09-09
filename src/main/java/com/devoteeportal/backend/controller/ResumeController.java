@@ -26,8 +26,9 @@ public class ResumeController {
     }
 
     @GetMapping("/browse")
-    public ResponseEntity<List<ResumeResponse>> browsePublicResumes() {
-        return ResponseEntity.ok(resumeService.browsePublicResumes());
+    public ResponseEntity<org.springframework.data.domain.Page<ResumeResponse>> browsePublicResumes(
+            @org.springframework.data.web.PageableDefault(sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) org.springframework.data.domain.Pageable pageable) {
+        return ResponseEntity.ok(resumeService.browsePublicResumes(pageable));
     }
 
     @PostMapping
