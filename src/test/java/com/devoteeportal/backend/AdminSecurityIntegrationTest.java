@@ -40,7 +40,9 @@ public class AdminSecurityIntegrationTest extends BaseIntegrationTest {
                 "\"password\":\"password\"," +
                 "\"name\":\"Non Admin\"," +
                 "\"role\":\"USER\"," +
-                "\"chantingRounds\":16" +
+                "\"chantingRounds\":16," +
+                "\"phone\":\"1234567890\"," +
+                "\"connectedToContact\":\"0987654321\"" +
                 "}";
         mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(signupJson)).andExpect(status().isOk());
         User user = userRepository.findByEmail("nonadmin@example.com").get();

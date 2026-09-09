@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin/signups")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
 
@@ -29,7 +29,7 @@ public class AdminController {
     private final AdminAuditService adminAuditService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/pending")
+    @GetMapping("/users/pending")
     public ResponseEntity<List<UserDto>> getPendingSignups(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String sortBy) {
@@ -37,7 +37,14 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/stats")
+    @GetMapping("/companies/pending")
+    public ResponseEntity<List<Object>> getPendingCompanies() {
+        // Placeholder: return empty list for now
+        return ResponseEntity.ok(java.util.Collections.emptyList());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/dashboard-stats")
     public ResponseEntity<AdminDashboardStatsDto> getDashboardStats() {
         return ResponseEntity.ok(adminService.getDashboardStats());
     }

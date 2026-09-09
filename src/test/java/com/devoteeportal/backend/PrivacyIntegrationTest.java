@@ -51,7 +51,9 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
                 "\"name\":\"Resume User\"," +
                 "\"role\":\"USER\"," +
                 "\"hideEmployer\":false," +
-                "\"chantingRounds\":16" +
+                "\"chantingRounds\":16," +
+                "\"phone\":\"5551234567\"," +
+                "\"connectedToContact\":\"0987654321\"" +
                 "}";
         
         mockMvc.perform(post("/api/auth/signup")
@@ -103,7 +105,9 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
                 "\"role\":\"USER\"," +
                 "\"hideEmployer\":true," +
                 "\"currentEmployer\":\"Secret Corp\"," +
-                "\"chantingRounds\":16" +
+                "\"chantingRounds\":16," +
+                "\"phone\":\"5551234567\"," +
+                "\"connectedToContact\":\"0987654321\"" +
                 "}";
         mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(signupJson1)).andExpect(status().isOk());
         User user1 = userRepository.findByEmail("hiddenemp@example.com").get();
@@ -117,7 +121,9 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
                 "\"name\":\"Viewer\"," +
                 "\"role\":\"USER\"," +
                 "\"hideEmployer\":false," +
-                "\"chantingRounds\":16" +
+                "\"chantingRounds\":16," +
+                "\"phone\":\"5551234567\"," +
+                "\"connectedToContact\":\"0987654321\"" +
                 "}";
         mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(signupJson2)).andExpect(status().isOk());
         User user2 = userRepository.findByEmail("viewer@example.com").get();

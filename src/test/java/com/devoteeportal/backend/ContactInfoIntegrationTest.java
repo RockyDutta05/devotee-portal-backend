@@ -59,7 +59,9 @@ public class ContactInfoIntegrationTest extends BaseIntegrationTest {
                 "\"password\":\"password\"," +
                 "\"name\":\"Requester\"," +
                 "\"role\":\"USER\"," +
-                "\"chantingRounds\":16" +
+                "\"chantingRounds\":16," +
+                "\"phone\":\"5551234567\"," +
+                "\"connectedToContact\":\"0987654321\"" +
                 "}";
         mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(signupJsonReq)).andExpect(status().isOk());
         User reqUser = userRepository.findByEmail("req@example.com").get();

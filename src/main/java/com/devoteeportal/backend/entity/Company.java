@@ -21,7 +21,7 @@ public class Company {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "added_by_user_id", nullable = false)
+    @JoinColumn(name = "added_by_user_id", nullable = true)
     private User addedByUserId;
 
     @Column(nullable = false)

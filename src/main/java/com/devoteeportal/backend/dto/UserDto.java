@@ -3,12 +3,15 @@ package com.devoteeportal.backend.dto;
 import com.devoteeportal.backend.entity.ApprovalStatus;
 import com.devoteeportal.backend.entity.Role;
 import lombok.Builder;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 public class UserDto {
     private UUID id;
@@ -26,6 +29,8 @@ public class UserDto {
     private String photoUrl;
     private Boolean hideEmployer;
     private Role role;
+    @Getter(onMethod = @__(@JsonProperty("status")))
+    @JsonProperty("status")
     private ApprovalStatus approvalStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

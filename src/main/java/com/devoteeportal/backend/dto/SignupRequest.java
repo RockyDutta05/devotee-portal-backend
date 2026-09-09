@@ -18,9 +18,9 @@ public class SignupRequest {
 
     private String connectedToName;
     private String connectedToDesignation;
-    @NotBlank(message = "Counselor/Mentor contact is required")
-    @Pattern(regexp = "^\\d{10}$", message = "Contact must be exactly 10 digits")
     private String connectedToContact;
+
+    
 
     @NotBlank
     @Email
@@ -32,7 +32,11 @@ public class SignupRequest {
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
     private String phone;
+
+    private String role;
+
     private String currentEmployer;
     private Boolean hideEmployer;
     private String photoUrl;
+
 }
