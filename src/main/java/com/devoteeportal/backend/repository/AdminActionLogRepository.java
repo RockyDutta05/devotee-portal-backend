@@ -16,9 +16,9 @@ import java.util.UUID;
 public interface AdminActionLogRepository extends JpaRepository<AdminActionLog, UUID> {
 
     @Query("SELECT log FROM AdminActionLog log WHERE " +
-           "(:actionType IS NULL OR log.actionType = :actionType) AND " +
-           "(:startDate IS NULL OR log.createdAt >= :startDate) AND " +
-           "(:endDate IS NULL OR log.createdAt <= :endDate)")
+           "(:#{#actionType == null} = true OR log.actionType = :actionType) AND " +
+           "(:#{#startDate == null} = true OR log.createdAt >= :startDate) AND " +
+           "(:#{#endDate == null} = true OR log.createdAt <= :endDate)")
     Page<AdminActionLog> findAuditLogsWithFilters(
             @Param("actionType") ActionType actionType,
             @Param("startDate") LocalDateTime startDate,
