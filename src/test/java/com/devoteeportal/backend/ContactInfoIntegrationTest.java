@@ -60,7 +60,7 @@ public class ContactInfoIntegrationTest extends BaseIntegrationTest {
                 "\"name\":\"Requester\"," +
                 "\"role\":\"USER\"," +
                 "\"chantingRounds\":16," +
-                "\"phone\":\"5551234567\"," +
+                "\"phone\":\"5559876543\"," +
                 "\"connectedToContact\":\"0987654321\"" +
                 "}";
         mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(signupJsonReq)).andExpect(status().isOk());

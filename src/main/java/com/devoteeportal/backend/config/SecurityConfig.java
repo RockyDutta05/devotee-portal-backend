@@ -74,12 +74,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allow the frontend URL (or specific origins from env)
-        if (System.getenv("FRONTEND_URL") != null) {
-            configuration.setAllowedOrigins(Arrays.asList(System.getenv("FRONTEND_URL")));
-        } else {
-            configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "http://192.168.*:*", "http://10.*:*", "http://172.*:*"));
-        }
+        // Allow any origin pattern (including admin portal) – adjust to a stricter whitelist in production if needed.
+        configuration.setAllowedOriginPatterns(java.util.Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);

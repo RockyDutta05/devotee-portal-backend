@@ -6,6 +6,7 @@ import com.devoteeportal.backend.entity.ResumeStatus;
 import com.devoteeportal.backend.entity.Role;
 import com.devoteeportal.backend.entity.User;
 import com.devoteeportal.backend.repository.UserRepository;
+import com.devoteeportal.backend.repository.ContactInfoRequestRepository;
 import com.devoteeportal.backend.service.ResumeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,9 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private ContactInfoRequestRepository contactInfoRequestRepository;
+    
     @Autowired
     private ResumeService resumeService;
     
@@ -39,6 +42,7 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setup() {
+        contactInfoRequestRepository.deleteAll();
         userRepository.deleteAll();
     }
 
