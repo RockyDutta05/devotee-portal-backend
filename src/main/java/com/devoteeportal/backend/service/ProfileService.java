@@ -46,6 +46,7 @@ public class ProfileService {
         return mapToMyProfile(savedUser);
     }
 
+    @Transactional
     public PublicProfileResponse getPublicProfile(String requesterEmail, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

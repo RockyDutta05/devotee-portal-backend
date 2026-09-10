@@ -1,7 +1,10 @@
 package com.devoteeportal.backend.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,6 +18,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class User {
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Resume> resumes = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

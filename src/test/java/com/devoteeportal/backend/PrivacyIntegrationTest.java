@@ -85,6 +85,9 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
         resumeRequest.setTitle("My Hidden Resume");
         resumeRequest.setStatus(ResumeStatus.ACTIVELY_LOOKING);
         resumeRequest.setHiddenFromPublicSearch(true);
+        resumeRequest.setFileName("resume.pdf");
+        resumeRequest.setFileType("application/pdf");
+        resumeRequest.setFileUrl("http://example.com/resume.pdf");
         
         mockMvc.perform(post("/api/resumes")
                 .header("Authorization", "Bearer " + token)
@@ -96,7 +99,7 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(get("/api/resumes/browse")
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty()); // Should be empty
+                .andExpect(jsonPath("$.content").isEmpty()); // Should be empty array
     }
 
     @Test
@@ -126,7 +129,7 @@ public class PrivacyIntegrationTest extends BaseIntegrationTest {
                 "\"role\":\"USER\"," +
                 "\"hideEmployer\":false," +
                 "\"chantingRounds\":16," +
-                "\"phone\":\"5551234567\"," +
+                "\"phone\":\"5551234568\"," +
                 "\"connectedToContact\":\"0987654321\"" +
                 "}";
         mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(signupJson2)).andExpect(status().isOk());
